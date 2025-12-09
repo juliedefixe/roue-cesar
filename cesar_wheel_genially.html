@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Roue César - style parchemin (A-Z)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#efe1c8;
+      --parchment-1:#e9dcc3;
+      --parchment-2:#d8c7a1;
+      --brown:#4b2f1f;
+      --accent:#6b3e22;
+      --soft-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      --angle-step: calc(360deg / 26);
+      --size: 900px;
+    }
+    html,body{height:100%;margin:0;font-family: "Cinzel", serif;background: radial-gradient(circle at 20% 10%, rgba(255,255,255,0.25), transparent 10%), linear-gradient(180deg,#f6ead0,#efe1c8 40%, #ead9b8); color:var(--brown)}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
+    .card{width:100%;max-width:1200px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));padding:20px;border-radius:14px;box-shadow:var(--soft-shadow);display:flex;gap:24px;flex-direction:column;align-items:center}
+    .stage{display:flex;gap:40px;align-items:center;justify-content:center;flex-wrap:wrap}
+    .wheel-frame{width:520px;height:520px;position:relative;display:flex;align-items:center;justify-content:center}
+    svg{width:100%;height:100%;display:block}
+    /* parchment circle */
+    .parchment{
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
+    }
+    .outer-ring{fill:url(#parchmentGrad);stroke:#b89b7a;stroke-width:6}
+    .outer-border{fill:none;stroke:#6b5338;stroke-width:6;}
+    .letters{fill:var(--brown);font-size:24px;letter-spacing:1px;font-weight:700;text-anchor:middle;dominant-baseline:middle}
+    .inner-letters{fill:var(--brown);font-size:20px;font-weight:700;text-anchor:middle;dominant-baseline:middle}
+    .marker{fill:var(--accent)}
+    .controls{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:8px}
+    .btn{
+      background:linear-gradient(180deg,#fffaf0,#f0dfbd);
+      border:1px solid rgba(75,47,31,0.15);
+      padding:10px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:16px;color:var(--brown);box-shadow:0 2px 6px rgba(0,0,0,0.08)
+    }
+    .btn:active{transform:translateY(1px)}
+    .caption{font-size:14px;color:#5b3f2f;margin-top:6px}
+    .instructions{font-size:14px;color:#5b3f2f;max-width:820px;text-align:center;margin-top:10px}
+    /* small responsive */
+    @media (max-width:800px){
+      .wheel-frame{width:360px;height:360px}
+      .letters{font-size:18px}
+      .inner-letters{font-size:14px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="application" aria-label="Roue César interactive — parchemin">
+      <h2 style="margin:0;font-size:20px;color:var(--brown)">Roue César — style parchemin (A → Z)</h2>
+      <div class="instructions">Clique sur ← ou → pour décaler la roue intérieure d'une lettre (mode : clic = +1). Le repère discret (triangle) aide l'alignement. Cette version est prête à être intégrée dans Genially via un <code>iframe</code>.</div>
+      <div class="stage" aria-hidden="false">
+        <!-- Outer (fixe) wheel -->
+        <div class="wheel-frame" style="width:520px;height:520px">
+          <svg viewBox="0 0 520 520" class="parchment" role="img" aria-label="Roue extérieure fixe">
+            <defs>
+              <radialGradient id="parchmentGrad" cx="35%" cy="25%">
+                <stop offset="0%" stop-color="#fffaf0" />
+                <stop offset="45%" stop-color="#efe1c8" />
+                <stop offset="100%" stop-color="#e0cfa8" />
+              </radialGradient>
+              <filter id="grain">
+                <feTurbulence baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+                <feColorMatrix type="saturate" values="0.05" />
+                <feBlend mode="overlay"/>
+              </filter>
+            </defs>
+            <circle cx="260" cy="260" r="200" class="outer-ring"/>
+            <circle cx="260" cy="260" r="170" class="outer-border"/>
+            <!-- letters A-Z around outer ring -->
+            <g transform="translate(260,260)">
+            </g>
+          </svg>
+        </div>
+
+        <!-- Inner (rotating) wheel -->
+        <div class="wheel-frame" style="width:360px;height:360px">
+          <svg id="innerWheel" viewBox="0 0 360 360" class="parchment" role="img" aria-label="Roue intérieure tournante">
+            <defs>
+              <radialGradient id="parchmentGrad2" cx="35%" cy="20%">
+                <stop offset="0%" stop-color="#fffaf0" />
+                <stop offset="45%" stop-color="#efe6d0" />
+                <stop offset="100%" stop-color="#dccaa2" />
+              </radialGradient>
+            </defs>
+            <circle cx="180" cy="180" r="140" class="outer-ring"/>
+            <circle cx="180" cy="180" r="110" class="outer-border"/>
+            <!-- marker (small triangle) at top (discrete) -->
+            <polygon id="marker" points="178,24 182,24 180,14" class="marker" />
+            <g id="innerLetters" transform="translate(180,180)"></g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="controls" style="margin-top:8px">
+        <button class="btn" id="prevBtn" aria-label="Tourner vers la gauche">←</button>
+        <div style="text-align:center">
+          <div style="font-weight:700">Déplacer la roue</div>
+          <div class="caption">Clic = +1 lettre</div>
+        </div>
+        <button class="btn" id="nextBtn" aria-label="Tourner vers la droite">→</button>
+      </div>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:12px">
+        <div class="btn" id="resetBtn" style="background:#f7efe0">Remettre A</div>
+        <div class="btn" id="showShift" style="background:#fff">Décalage actuel : <span id="shiftValue">0</span></div>
+      </div>
+
+      <div class="instructions" style="margin-top:12px">Intégration Genially : héberge ce fichier HTML (GitHub Pages, Netlify Drop, ou autre) puis <strong>Insérer → Intégrer</strong> dans Genially et colle l'URL publique en iframe. Voir instructions sous le fichier téléchargé.</div>
+
+    </div>
+  </div>
+
+<script>
+  // Create letters A-Z and place them around outer and inner wheels
+  (function(){
+    const outerGroup = document.querySelector('svg[role="img"][aria-label="Roue extérieure fixe"] g');
+    const innerGroup = document.getElementById('innerLetters');
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+    const outerRadius = 200 - 24; // radius for outer letters (svg 520)
+    const innerRadius = 120; // radius for inner letters (svg 360)
+    // Outer letters (bigger)
+    letters.forEach((ch,i)=>{
+      const angle = (i * (360/26) - 90) * Math.PI/180;
+      const x = Math.cos(angle) * outerRadius;
+      const y = Math.sin(angle) * outerRadius;
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x', x.toFixed(2));
+      t.setAttribute('y', y.toFixed(2));
+      t.setAttribute('class','letters');
+      t.textContent = ch;
+      outerGroup.appendChild(t);
+    });
+    // Inner letters as a group — we'll rotate this group to simulate clicks
+    letters.forEach((ch,i)=>{
+      const angle = (i * (360/26) - 90) * Math.PI/180;
+      const x = Math.cos(angle) * innerRadius;
+      const y = Math.sin(angle) * innerRadius;
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x', x.toFixed(2));
+      t.setAttribute('y', y.toFixed(2));
+      t.setAttribute('class','inner-letters');
+      t.textContent = ch;
+      innerGroup.appendChild(t);
+    });
+
+    // Rotation logic (click step)
+    const step = 360/26;
+    let current = 0; // degrees, 0 means aligned A under marker
+    const innerSVG = document.getElementById('innerWheel');
+    const innerLettersGroup = innerGroup;
+    // set transform origin via attribute (translate)
+    function applyRotation(){
+      innerLettersGroup.setAttribute('transform', 'rotate(' + current + ' 0 0)');
+      document.getElementById('shiftValue').textContent = ((Math.round(((-current/step))%26)+26)%26);
+    }
+    applyRotation();
+
+    document.getElementById('nextBtn').addEventListener('click', ()=> {
+      current -= step;
+      // snap to avoid float drift
+      current = Math.round(current * 1000000)/1000000;
+      applyRotation();
+    });
+    document.getElementById('prevBtn').addEventListener('click', ()=> {
+      current += step;
+      current = Math.round(current * 1000000)/1000000;
+      applyRotation();
+    });
+    document.getElementById('resetBtn').addEventListener('click', ()=> {
+      current = 0; applyRotation();
+    });
+
+    // Accessibility: keyboard support (left/right arrows)
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'ArrowRight') { document.getElementById('nextBtn').click(); }
+      if(e.key === 'ArrowLeft') { document.getElementById('prevBtn').click(); }
+    });
+
+  })();
+</script>
+</body>
+</html>
