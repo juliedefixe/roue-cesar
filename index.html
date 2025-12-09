@@ -7,25 +7,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#efe1c8;
-      --parchment-1:#e9dcc3;
-      --parchment-2:#d8c7a1;
       --brown:#4b2f1f;
       --accent:#6b3e22;
       --soft-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      --angle-step: calc(360deg / 26);
-      --size: 900px;
     }
-    html,body{height:100%;margin:0;font-family: "Cinzel", serif;background: radial-gradient(circle at 20% 10%, rgba(255,255,255,0.25), transparent 10%), linear-gradient(180deg,#f6ead0,#efe1c8 40%, #ead9b8); color:var(--brown)}
+    html,body{height:100%;margin:0;font-family: "Cinzel", serif;background:transparent;color:var(--brown)}
     .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
-    .card{width:100%;max-width:1200px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));padding:20px;border-radius:14px;box-shadow:var(--soft-shadow);display:flex;gap:24px;flex-direction:column;align-items:center}
-    .stage{display:flex;gap:40px;align-items:center;justify-content:center;flex-wrap:wrap}
-    .wheel-frame{width:520px;height:520px;position:relative;display:flex;align-items:center;justify-content:center}
-    svg{width:100%;height:100%;display:block}
-    /* parchment circle */
-    .parchment{
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
+    .card{width:100%;max-width:1200px;padding:20px;border-radius:14px;box-shadow:var(--soft-shadow);display:flex;gap:24px;flex-direction:column;align-items:center;background:transparent}
+    /* Horizontal stage - wheels touching slightly */
+    .stage{
+      display:flex;
+      gap:8px; /* small gap so wheels touch slightly */
+      align-items:center;
+      justify-content:center;
+      flex-wrap:nowrap;
     }
+    .wheel-frame{width:520px;height:520px;position:relative;display:flex;align-items:center;justify-content:center}
+    .wheel-frame.small{width:340px;height:340px}
+    svg{width:100%;height:100%;display:block}
+    .parchment{filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));border-radius:999px}
     .outer-ring{fill:url(#parchmentGrad);stroke:#b89b7a;stroke-width:6}
     .outer-border{fill:none;stroke:#6b5338;stroke-width:6;}
     .letters{fill:var(--brown);font-size:24px;letter-spacing:1px;font-weight:700;text-anchor:middle;dominant-baseline:middle}
@@ -40,9 +40,9 @@
     .btn:active{transform:translateY(1px)}
     .caption{font-size:14px;color:#5b3f2f;margin-top:6px}
     .instructions{font-size:14px;color:#5b3f2f;max-width:820px;text-align:center;margin-top:10px}
-    /* small responsive */
     @media (max-width:800px){
       .wheel-frame{width:360px;height:360px}
+      .wheel-frame.small{width:260px;height:260px}
       .letters{font-size:18px}
       .inner-letters{font-size:14px}
     }
@@ -52,10 +52,10 @@
   <div class="wrap">
     <div class="card" role="application" aria-label="Roue César interactive — parchemin">
       <h2 style="margin:0;font-size:20px;color:var(--brown)">Roue César — style parchemin (A → Z)</h2>
-      <div class="instructions">Clique sur ← ou → pour décaler la roue intérieure d'une lettre (mode : clic = +1). Le repère discret (triangle) aide l'alignement. Cette version est prête à être intégrée dans Genially via un <code>iframe</code>.</div>
+      <div class="instructions">Clique sur ← ou → pour décaler la roue intérieure d'une lettre (mode : clic = +1). Le repère discret (triangle) aide l'alignement. Cette page a un fond transparent pour s'intégrer dans Genially.</div>
       <div class="stage" aria-hidden="false">
         <!-- Outer (fixe) wheel -->
-        <div class="wheel-frame" style="width:520px;height:520px">
+        <div class="wheel-frame" aria-hidden="true">
           <svg viewBox="0 0 520 520" class="parchment" role="img" aria-label="Roue extérieure fixe">
             <defs>
               <radialGradient id="parchmentGrad" cx="35%" cy="25%">
@@ -63,22 +63,15 @@
                 <stop offset="45%" stop-color="#efe1c8" />
                 <stop offset="100%" stop-color="#e0cfa8" />
               </radialGradient>
-              <filter id="grain">
-                <feTurbulence baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
-                <feColorMatrix type="saturate" values="0.05" />
-                <feBlend mode="overlay"/>
-              </filter>
             </defs>
             <circle cx="260" cy="260" r="200" class="outer-ring"/>
             <circle cx="260" cy="260" r="170" class="outer-border"/>
-            <!-- letters A-Z around outer ring -->
-            <g transform="translate(260,260)">
-            </g>
+            <g transform="translate(260,260)"></g>
           </svg>
         </div>
 
-        <!-- Inner (rotating) wheel -->
-        <div class="wheel-frame" style="width:360px;height:360px">
+        <!-- Inner (rotating) wheel - slightly overlapping -->
+        <div class="wheel-frame small" aria-hidden="true" style="margin-left:-28px"> 
           <svg id="innerWheel" viewBox="0 0 360 360" class="parchment" role="img" aria-label="Roue intérieure tournante">
             <defs>
               <radialGradient id="parchmentGrad2" cx="35%" cy="20%">
@@ -110,15 +103,13 @@
         <div class="btn" id="showShift" style="background:#fff">Décalage actuel : <span id="shiftValue">0</span></div>
       </div>
 
-      <div class="instructions" style="margin-top:12px">Intégration Genially : héberge ce fichier HTML (GitHub Pages, Netlify Drop, ou autre) puis <strong>Insérer → Intégrer</strong> dans Genially et colle l'URL publique en iframe. Voir instructions sous le fichier téléchargé.</div>
-
     </div>
   </div>
 
 <script>
   // Create letters A-Z and place them around outer and inner wheels
   (function(){
-    const outerGroup = document.querySelector('svg[role="img"][aria-label="Roue extérieure fixe"] g');
+    const outerGroup = document.querySelector('svg[aria-label="Roue extérieure fixe"] g');
     const innerGroup = document.getElementById('innerLetters');
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
     const outerRadius = 200 - 24; // radius for outer letters (svg 520)
@@ -151,9 +142,8 @@
     // Rotation logic (click step)
     const step = 360/26;
     let current = 0; // degrees, 0 means aligned A under marker
-    const innerSVG = document.getElementById('innerWheel');
     const innerLettersGroup = innerGroup;
-    // set transform origin via attribute (translate)
+
     function applyRotation(){
       innerLettersGroup.setAttribute('transform', 'rotate(' + current + ' 0 0)');
       document.getElementById('shiftValue').textContent = ((Math.round(((-current/step))%26)+26)%26);
@@ -162,7 +152,6 @@
 
     document.getElementById('nextBtn').addEventListener('click', ()=> {
       current -= step;
-      // snap to avoid float drift
       current = Math.round(current * 1000000)/1000000;
       applyRotation();
     });
@@ -175,7 +164,7 @@
       current = 0; applyRotation();
     });
 
-    // Accessibility: keyboard support (left/right arrows)
+    // Keyboard support
     window.addEventListener('keydown', (e)=>{
       if(e.key === 'ArrowRight') { document.getElementById('nextBtn').click(); }
       if(e.key === 'ArrowLeft') { document.getElementById('prevBtn').click(); }
